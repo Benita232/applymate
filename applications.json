@@ -8,6 +8,11 @@
     {
       "company": "Google",
       "role": "Software Engineer",
+      "status": "Interview"
+    },
+    {
+      "company": "Microsoft",
+      "role": "software",
       "status": "Applied"
     }
   ]

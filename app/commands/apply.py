@@ -6,7 +6,15 @@ def handle_apply(ack, respond, command):
     user_id = command["user_id"]
 
     if "," not in text:
-        respond("Usage: `/apply Company, Role` — e.g. `/apply Google, Software Engineer`")
+        respond(blocks=[
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": ":warning: *Wrong format!*\nUsage: `/apply Company, Role`\nExample: `/apply Google, Software Engineer`"
+                }
+            }
+        ], text="Wrong format")
         return
 
     parts = text.split(",", 1)
@@ -14,8 +22,66 @@ def handle_apply(ack, respond, command):
     role = parts[1].strip()
 
     if not company or not role:
-        respond("Please provide both a company and a role. e.g. `/apply Google, Software Engineer`")
+        respond(blocks=[
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": ":warning: Please provide both a company and a role."
+                }
+            }
+        ], text="Missing fields")
         return
 
     result = add_application(user_id, company, role)
-    respond(result)
+
+    if "already applied" in result:
+        respond(blocks=[
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": f":repeat: {result}"
+                }
+            }
+        ], text=result)
+        return
+
+    respond(blocks=[
+        {
+            "type": "header",
+            "text": {
+                "type": "plain_text",
+                "text": "Application Logged! :briefcase:"
+            }
+        },
+        {
+            "type": "section",
+            "fields": [
+                {
+                    "type": "mrkdwn",
+                    "text": f"*Company:*\n{company}"
+                },
+                {
+                    "type": "mrkdwn",
+                    "text": f"*Role:*\n{role}"
+                },
+                {
+                    "type": "mrkdwn",
+                    "text": "*Status:*\n🟡 Applied"
+                },
+            ]
+        },
+        {
+            "type": "divider"
+        },
+        {
+            "type": "context",
+            "elements": [
+                {
+                    "type": "mrkdwn",
+                    "text": "Use `/mystatus` to view all applications • `/update Number, Status` to update"
+                }
+            ]
+        }
+    ], text=result)
