@@ -16,16 +16,16 @@ app = App(
 )
 
 @app.command("/apply")
-def apply_command(ack, say, command):
-    handle_apply(ack, say, command)
+def apply_command(ack, respond, command):
+    handle_apply(ack, respond, command)
 
-@app.command("/status")
-def status_command(ack, say, command):
-    handle_status(ack, say, command)
+@app.command("/mystatus")
+def status_command(ack, respond, command):
+    handle_status(ack, respond, command)
 
 @app.command("/update")
-def update_command(ack, say, command):
-    handle_update(ack, say, command)
+def update_command(ack, respond, command):
+    handle_update(ack, respond, command)
 
 flask_app = Flask(__name__)
 handler = SlackRequestHandler(app)
@@ -35,4 +35,4 @@ def slack_events():
     return handler.handle(request)
 
 if __name__ == "__main__":
-    flask_app.run(port=3000)
+    flask_app.run(port=3000, debug=True)

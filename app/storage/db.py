@@ -17,6 +17,12 @@ def add_application(user_id, company, role):
     data = load_applications()
     if user_id not in data:
         data[user_id] = []
+
+    for app in data[user_id]:
+        if app["company"].lower() == company.lower() and app["role"].lower() == role.lower():
+            return f"You already applied to *{role}* at *{company}*. Use `/update` to change the status."
+
+
     data[user_id].append({
         "company": company,
         "role": role,
