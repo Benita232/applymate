@@ -53,3 +53,15 @@ def update_status(user_id, number, new_status):
     save_applications(data)
     company = apps[number - 1]["company"]
     return f"Updated *{company}* status to *{new_status}*"
+
+def delete_application(user_id, number):
+    data = load_applications()
+    apps = data.get(user_id, [])
+    if not apps:
+        return None, "No applications found."
+    if number < 1 or number > len(apps):
+        return None, f"Invalid number. You have {len(apps)} application(s)."
+    removed = apps.pop(number - 1)
+    data[user_id] = apps
+    save_applications(data)
+    return removed, None

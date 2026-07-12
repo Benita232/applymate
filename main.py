@@ -7,6 +7,7 @@ from flask import Flask, request
 from app.commands.apply import handle_apply
 from app.commands.status import handle_status
 from app.commands.update import handle_update
+from app.commands.delete import handle_delete
 
 load_dotenv()
 
@@ -26,6 +27,10 @@ def status_command(ack, respond, command):
 @app.command("/update")
 def update_command(ack, respond, command):
     handle_update(ack, respond, command)
+
+@app.command("/delete")
+def delete_command(ack, respond, command):
+    handle_delete(ack, respond, command)
 
 flask_app = Flask(__name__)
 handler = SlackRequestHandler(app)
