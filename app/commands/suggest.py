@@ -1,5 +1,4 @@
 import os
-import time
 import google.generativeai as genai
 from app.storage.db import load_applications
 
@@ -7,8 +6,8 @@ def build_rule_based_suggestion(apps):
     overdue = [a for a in apps if a.get("status", "").lower() in {"interviewed", "applied", "pending"}]
     if overdue:
         top = overdue[0]
-        return f"• Follow up with {top['company']}.\n• Update your resume for the next role.\n• Apply to 2 more jobs today."
-    return "• Keep applying consistently.\n• Tailor each application.\n• Follow up on older applications."
+        return f"• Follow up with *{top['company']}* — don't let it go cold.\n• Update your resume for the next role.\n• Apply to 2 more jobs today to keep momentum."
+    return "• Keep applying consistently — aim for 3 applications a day.\n• Tailor each cover letter to the specific role.\n• Follow up on any applications older than 7 days."
 
 def handle_suggest(ack, respond, command):
     ack()
@@ -17,12 +16,15 @@ def handle_suggest(ack, respond, command):
     apps = data.get(user_id, [])
 
     if not apps:
-        respond(text="No applications yet. Use /apply Company, Role to log your first one.")
-        return
-
-    api_key = os.environ.get("GEMINI_API_KEY")
-    if not api_key:
-        respond(text=build_rule_based_suggestion(apps))
+        respond(blocks=[
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": ":mag: *No applications yet!*\nUse `/apply Company, Role` to log your first one."
+                }
+            }
+        ], text="No applications yet")
         return
 
     apps_text = "\n".join(
@@ -39,11 +41,41 @@ Applications:
 {apps_text}"""
 
     try:
+        api_key = os.environ.get("GEMINI_API_KEY")
         genai.configure(api_key=api_key)
         model = genai.GenerativeModel("gemini-1.5-flash")
         response = model.generate_content(prompt)
         suggestion = response.text.strip()
+        powered_by = "Powered by Gemini AI"
     except Exception:
         suggestion = build_rule_based_suggestion(apps)
+        powered_by = "Powered by ApplyMate AI"
 
-    respond(text=suggestion)
+    respond(blocks=[
+        {
+            "type": "header",
+            "text": {
+                "type": "plain_text",
+                "text": "AI Job Search Suggestions 🤖"
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": suggestion
+            }
+        },
+        {
+            "type": "divider"
+        },
+        {
+            "type": "context",
+            "elements": [
+                {
+                    "type": "mrkdwn",
+                    "text": f"{powered_by} • Use `/mystatus` to view all applications"
+                }
+            ]
+        }
+    ], text=suggestion)
