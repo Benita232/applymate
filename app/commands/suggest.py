@@ -27,7 +27,7 @@ def handle_suggest(ack, respond, command):
         ])
 
         genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        model = genai.GenerativeModel("gemini-2.0-flash")
 
         response = model.generate_content(
             f"""You are a job search coach. Give 2-3 short bullet point suggestions for this job seeker. Be direct and encouraging. Under 80 words.
