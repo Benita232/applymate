@@ -3,27 +3,12 @@
     {
       "company": "Google",
       "role": "Software Engineer",
-      "status": "Applied"
-    },
-    {
-      "company": "Google",
-      "role": "Software Engineer",
       "status": "Interview"
     },
     {
-      "company": "Microsoft",
-      "role": "software",
-      "status": "Applied"
-    },
-    {
-      "company": "Microsoft",
-      "role": "Software egneering",
-      "status": "Applied"
-    },
-    {
-      "company": "meta",
-      "role": "Data Engeneering",
-      "status": "Applied"
+      "company": "Meta",
+      "role": "Backend Developer",
+      "status": "Rejected"
     }
   ]
 }
